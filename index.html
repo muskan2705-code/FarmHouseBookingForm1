@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Farmhouse Booking</title>
+ <style>
+  * {
+    box-sizing: border-box;
+  }
+
+ body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: url('C:/Users/hello/OneDrive/Desktop/bhaktifarm.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    padding: 30px;
+}
+
+  .form-box {
+    background: #ffffff;
+    padding: 30px;
+    max-width: 650px;
+    margin: auto;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  }
+
+  .brand {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  h2 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 25px;
+  }
+
+  label {
+    display: block;
+    margin-top: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #4caf50;
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
+  }
+
+  .row div {
+    flex: 1;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .summary {
+    background: #f9f9f9;
+    padding: 18px;
+    margin-top: 25px;
+    border-radius: 10px;
+    border-left: 5px solid #4caf50;
+  }
+
+  .summary div {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+
+  .total {
+    font-size: 22px;
+    font-weight: 800;
+    color: #2e7d32;
+    margin-top: 10px;
+  }
+
+  button {
+    margin-top: 25px;
+    padding: 14px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  button:hover {
+    background: #388e3c;
+  }
+
+  @media (max-width: 600px) {
+    .row {
+      flex-direction: column;
+    }
+  }
+  .tariff-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0 10px;
+  font-size: 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.tariff-table th {
+  background: #2e7d32;
+  color: #ffffff;
+  padding: 12px;
+  text-align: center;
+}
+
+.tariff-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tariff-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tariff-table small {
+  font-size: 12px;
+  color: #666;
+}
+
+.weekend-row {
+  background: #fff3e0;
+}
+
+.tariff-note {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #444;
+}
+.deposit-note {
+  background: #e8f5e9;
+  border-left: 5px solid #2e7d32;
+  padding: 14px 16px;
+  margin: 10px 0 25px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  color: #2e7d32;
+  line-height: 1.5;
+}
+
+.deposit-note span {
+  font-weight: bold;
+}
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.checkbox-line input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.extra-info {
+  background: #fff8e1;
+  border-left: 5px solid #ffb300;
+  padding: 12px 14px;
+  margin-top: 15px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  color: #555;
+  line-height: 1.5;
+}
+.date-message { margin-top:5px; font-size:14px; }
+.date-message.success { color: green; }
+.date-message.error { color: red; }
+
+</style>
+
+</head>
+
+<body>
+<div class="brand">Bhakti Farms</div>
+<div id="dateMessage" class="date-message"></div>
+
+
+<div class="form-box">
+  <h2>Farmhouse Booking</h2>
+
+  <label>Name</label>
+  <input id="name">
+
+  <label>City</label>
+  <input id="city">
+
+  <label>Phone</label>
+  <input id="phone">
+
+  <label>Check-in Date</label>
+  <input type="date" id="checkin">
+
+  <label>Check-out Date</label>
+  <input type="date" id="checkout">
+
+  <label>Duration</label>
+  <select id="duration">
+    <option value="">Select</option>
+    <option value="12">12 Hours</option>
+    <option value="24">24 Hours</option>
+  </select>
+
+  <div class="row">
+    <div>
+      <label>Total Persons</label>
+      <input type="number" id="persons">
+    </div>
+    <div>
+      <label>Adults</label>
+      <input type="number" id="adults">
+    </div>
+    <div>
+      <label>Children</label>
+      <input type="number" id="children">
+    </div>
+  </div>
+
+ <label class="checkbox-line">
+  <input type="checkbox" id="projector">
+  <span>Projector (₹1500)</span>
+</label>
+
+<label class="checkbox-line">
+  <input type="checkbox" id="campfire">
+  <span>Campfire (₹500)</span>
+</label>
+
+  <label>Special Requirements</label>
+  <textarea id="requirements"></textarea>
+  <div class="extra-info">
+  ➕ <strong>Extra guests above 15:</strong> ₹500 per person<br>
+  ➕ <strong>Amenities</strong> are charged separately
+</div>
+<h3>Tariff Details</h3>
+
+<table class="tariff-table">
+  <thead>
+    <tr>
+      <th>Day Type</th>
+      <th>12 Hours</th>
+      <th>24 Hours</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Weekdays<br><small>(Mon – Thu)</small></td>
+      <td>₹10,000</td>
+      <td>₹15,000</td>
+    </tr>
+    <tr class="weekend-row">
+      <td>Weekends<br><small>(Fri – Sun)</small></td>
+      <td>₹13,000</td>
+      <td>₹20,000</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="deposit-note">
+  <strong>Security Deposit:</strong><br>
+  ₹5,000 <span>(Refundable)</span> will be collected at check-in.<br>
+  It will be returned at check-out after a quick inspection to ensure the
+  property is handed over in good condition.
+</div>
+
+
+  <h3>Cost Summary</h3>
+  <div class="summary" id="summary">
+    <div>Base Price: ₹0</div>
+    <div>Extra Guest Charges: ₹0</div>
+    <div>Amenities Cost: ₹0</div>
+    <div class="total">Total: ₹0</div>
+  </div>
+
+  <button onclick="submitBooking()">Submit Booking</button>
+</div>
+
+<script>
+let basePrice = 0, extraGuestCharge = 0, amenitiesCost = 0;
+
+function calculateTotal() {
+  const checkinVal = document.getElementById("checkin").value;
+  const checkoutVal = document.getElementById("checkout").value;
+  const durationVal = document.getElementById("duration").value;
+  const personsVal = Number(document.getElementById("persons").value);
+
+  if (!checkinVal || !checkoutVal || !durationVal || !personsVal) return;
+
+  const checkinDate = new Date(checkinVal);
+  const checkoutDate = new Date(checkoutVal);
+
+  if (checkoutDate <= checkinDate) {
+    document.getElementById("summary").innerHTML =
+      `<div style="color:red">❌ Check-out date must be after check-in date</div>`;
+    return;
+  }
+
+  basePrice = 0;
+
+  // Loop through EACH day
+  let currentDate = new Date(checkinDate);
+
+  while (currentDate < checkoutDate) {
+    const day = currentDate.getDay(); // 0=Sun, 6=Sat
+    const isWeekend = (day === 0 || day === 5 || day === 6);
+
+    let dailyPrice = 0;
+
+    if (isWeekend) {
+      dailyPrice = (durationVal == 12) ? 13000 : 20000;
+    } else {
+      dailyPrice = (durationVal == 12) ? 10000 : 15000;
+    }
+
+    basePrice += dailyPrice;
+
+    // Move to next day
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  // Extra guest charges
+  extraGuestCharge = personsVal > 15 ? (personsVal - 15) * 500 : 0;
+
+  // Amenities
+  amenitiesCost =
+    (document.getElementById("projector").checked ? 1500 : 0) +
+    (document.getElementById("campfire").checked ? 500 : 0);
+
+  const total = basePrice + extraGuestCharge + amenitiesCost;
+
+  document.getElementById("summary").innerHTML = `
+    <div>Base Price (Day-wise): ₹${basePrice}</div>
+    <div>Extra Guest Charges: ₹${extraGuestCharge}</div>
+    <div>Amenities Cost: ₹${amenitiesCost}</div>
+    <div class="total">Total: ₹${total}</div>
+  `;
+}
+
+// Attach listeners
+window.addEventListener("DOMContentLoaded", () => {
+  ["checkin","checkout","duration","persons","projector","campfire"]
+    .forEach(id => {
+      document.getElementById(id).addEventListener("change", calculateTotal);
+      document.getElementById(id).addEventListener("input", calculateTotal);
+    });
+});
+
+// --- CHECK DATE AVAILABILITY WITH POPUP ---
+function checkDateAvailability(date, callback) {
+  fetch("https://script.google.com/macros/s/AKfycbxirHZX5FYD5auywvKZRPiumct3gJ0UJM_BVFObpe5xcKTBpbu9UQzxQDEc75LOVMGs/exec?action=checkDate&date=" + date)
+    .then(res => res.text())
+    .then(status => {
+      if (status.trim() === "BOOKED") {
+        alert("❌ Sorry, these dates are already booked. Please choose different dates.");
+        callback(false); // cannot submit
+      } else {
+        callback(true); // date available
+      }
+    })
+    .catch(err => {
+      alert("❌ Sorry, these dates are already booked. Please choose different dates.");
+      callback(false); // fail-safe
+    });
+}
+
+// --- SUBMIT BOOKING ---
+function submitBooking() {
+  const selectedDate = document.getElementById("checkin").value;
+
+  if (!selectedDate) {
+    alert("⚠ Please select a check-in date first.");
+    return;
+  }
+
+  // Check if date is available before submitting
+  checkDateAvailability(selectedDate, function(canSubmit) {
+    if (!canSubmit) return; // stop submission if date booked
+
+    // Proceed with submission
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "https://script.google.com/macros/s/AKfycbxirHZX5FYD5auywvKZRPiumct3gJ0UJM_BVFObpe5xcKTBpbu9UQzxQDEc75LOVMGs/exec"; // <-- replace with your Apps Script URL
+
+    const fields = {
+      name: document.getElementById("name").value,
+      city: document.getElementById("city").value,
+      phone: document.getElementById("phone").value,
+      checkin: document.getElementById("checkin").value,
+      checkout: document.getElementById("checkout").value,
+      duration: document.getElementById("duration").value,
+      persons: document.getElementById("persons").value,
+      adults: document.getElementById("adults").value,
+      children: document.getElementById("children").value,
+      projector: document.getElementById("projector").checked ? "Yes" : "No",
+      campfire: document.getElementById("campfire").checked ? "Yes" : "No",
+      basePrice,
+      extraGuestCharge,
+      amenitiesCost,
+      total: basePrice + extraGuestCharge + amenitiesCost,
+      requirements: document.getElementById("requirements").value
+    };
+
+    for (let key in fields) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = fields[key];
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    alert("✅ Booking submitted successfully!");
+  });
+}
+</script>
+</body>
+</html>
+
