@@ -29,7 +29,7 @@
     font-size: 32px;
     font-weight: 800;
     color: white;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     margin-bottom: 8px;
     letter-spacing: 1px;
   }
@@ -38,6 +38,13 @@
     text-align: center;
     color: #444;
     margin-bottom: 25px;
+  }
+
+  h3 {
+    color: #2e7d32;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 20px;
   }
 
   label {
@@ -119,90 +126,132 @@
       flex-direction: column;
     }
   }
-  .tariff-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 15px 0 10px;
-  font-size: 15px;
-  background: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
 
-.tariff-table th {
-  background: #2e7d32;
-  color: #ffffff;
-  padding: 12px;
-  text-align: center;
-}
+  .tariff-table, .datetime-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0 10px;
+    font-size: 15px;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
 
-.tariff-table td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid #e0e0e0;
-}
+  .tariff-table th, .datetime-table th {
+    background: #2e7d32;
+    color: #ffffff;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+  }
 
-.tariff-table tbody tr:last-child td {
-  border-bottom: none;
-}
+  .tariff-table td, .datetime-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
 
-.tariff-table small {
-  font-size: 12px;
-  color: #666;
-}
+  .datetime-table td {
+    text-align: left;
+  }
 
-.weekend-row {
-  background: #fff3e0;
-}
+  .datetime-table input {
+    margin-top: 0;
+  }
 
-.tariff-note {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 20px;
-  color: #444;
-}
-.deposit-note {
-  background: #e8f5e9;
-  border-left: 5px solid #2e7d32;
-  padding: 14px 16px;
-  margin: 10px 0 25px;
-  border-radius: 8px;
-  font-size: 14.5px;
-  color: #2e7d32;
-  line-height: 1.5;
-}
+  .tariff-table tbody tr:last-child td,
+  .datetime-table tbody tr:last-child td {
+    border-bottom: none;
+  }
 
-.deposit-note span {
-  font-weight: bold;
-}
-.checkbox-line {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  font-weight: 600;
-  color: #333;
-}
+  .tariff-table small {
+    font-size: 12px;
+    color: #666;
+  }
 
-.checkbox-line input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-.extra-info {
-  background: #fff8e1;
-  border-left: 5px solid #ffb300;
-  padding: 12px 14px;
-  margin-top: 15px;
-  border-radius: 8px;
-  font-size: 14.5px;
-  color: #555;
-  line-height: 1.5;
-}
-.date-message { margin-top:5px; font-size:14px; }
-.date-message.success { color: green; }
-.date-message.error { color: red; }
+  .weekend-row {
+    background: #fff3e0;
+  }
+
+  .deposit-note {
+    background: #e8f5e9;
+    border-left: 5px solid #2e7d32;
+    padding: 14px 16px;
+    margin: 10px 0 25px;
+    border-radius: 8px;
+    font-size: 14.5px;
+    color: #2e7d32;
+    line-height: 1.5;
+  }
+
+  .deposit-note span {
+    font-weight: bold;
+  }
+
+  .checkbox-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .checkbox-line input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .extra-info {
+    background: #fff8e1;
+    border-left: 5px solid #ffb300;
+    padding: 12px 14px;
+    margin-top: 15px;
+    border-radius: 8px;
+    font-size: 14.5px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .date-message {
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .date-message.success {
+    color: green;
+    background: #e8f5e9;
+  }
+
+  .date-message.error {
+    color: red;
+    background: #ffebee;
+  }
+
+  .availability-header {
+    background: #1976d2;
+    color: white;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+
+  .status-available {
+    color: #2e7d32;
+    font-weight: bold;
+  }
+
+  .status-checking {
+    color: #ff9800;
+    font-weight: bold;
+  }
 
 </style>
 
@@ -210,29 +259,55 @@
 
 <body>
 <div class="brand">Bhakti Farms</div>
-<div id="dateMessage" class="date-message"></div>
-
 
 <div class="form-box">
   <h2>Farmhouse Booking</h2>
 
   <label>Name</label>
-  <input id="name">
+  <input id="name" required>
 
   <label>City</label>
-  <input id="city">
+  <input id="city" required>
 
   <label>Phone</label>
-  <input id="phone">
+  <input id="phone" required>
 
-  <label>Check-in Date</label>
-  <input type="date" id="checkin">
-
-  <label>Check-out Date</label>
-  <input type="date" id="checkout">
+  <!-- CHECK AVAILABILITY TABLE -->
+  <div class="availability-header">📅 Check Availability</div>
+  <table class="datetime-table">
+    <thead>
+      <tr>
+        <th style="width: 40%;">Field</th>
+        <th style="width: 60%;">Enter Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Check-in Date</strong></td>
+        <td><input type="date" id="checkin" required></td>
+      </tr>
+      <tr>
+        <td><strong>Check-in Time</strong></td>
+        <td><input type="time" id="checkinTime" required></td>
+      </tr>
+      <tr>
+        <td><strong>Check-out Date</strong></td>
+        <td><input type="date" id="checkout" required></td>
+      </tr>
+      <tr>
+        <td><strong>Check-out Time</strong></td>
+        <td><input type="time" id="checkoutTime" required></td>
+      </tr>
+      <tr>
+        <td><strong>Availability Status</strong></td>
+        <td id="availabilityStatus" class="status-checking">Select dates to check</td>
+      </tr>
+    </tbody>
+  </table>
+  <div id="dateMessage" class="date-message" style="display:none;"></div>
 
   <label>Duration</label>
-  <select id="duration">
+  <select id="duration" required>
     <option value="">Select</option>
     <option value="12">12 Hours</option>
     <option value="24">24 Hours</option>
@@ -241,65 +316,65 @@
   <div class="row">
     <div>
       <label>Total Persons</label>
-      <input type="number" id="persons">
+      <input type="number" id="persons" required>
     </div>
     <div>
       <label>Adults</label>
-      <input type="number" id="adults">
+      <input type="number" id="adults" required>
     </div>
     <div>
       <label>Children</label>
-      <input type="number" id="children">
+      <input type="number" id="children" required>
     </div>
   </div>
 
- <label class="checkbox-line">
-  <input type="checkbox" id="projector">
-  <span>Projector (₹1500)</span>
-</label>
+  <label class="checkbox-line">
+    <input type="checkbox" id="projector">
+    <span>Projector (₹1500)</span>
+  </label>
 
-<label class="checkbox-line">
-  <input type="checkbox" id="campfire">
-  <span>Campfire (₹500)</span>
-</label>
+  <label class="checkbox-line">
+    <input type="checkbox" id="campfire">
+    <span>Campfire (₹500)</span>
+  </label>
 
   <label>Special Requirements</label>
   <textarea id="requirements"></textarea>
+  
   <div class="extra-info">
-  ➕ <strong>Extra guests above 15:</strong> ₹500 per person<br>
-  ➕ <strong>Amenities</strong> are charged separately
-</div>
-<h3>Tariff Details</h3>
+    ➕ <strong>Extra guests above 15:</strong> ₹500 per person<br>
+    ➕ <strong>Amenities</strong> are charged separately
+  </div>
 
-<table class="tariff-table">
-  <thead>
-    <tr>
-      <th>Day Type</th>
-      <th>12 Hours</th>
-      <th>24 Hours</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Weekdays<br><small>(Mon – Thu)</small></td>
-      <td>₹10,000</td>
-      <td>₹15,000</td>
-    </tr>
-    <tr class="weekend-row">
-      <td>Weekends<br><small>(Fri – Sun)</small></td>
-      <td>₹13,000</td>
-      <td>₹20,000</td>
-    </tr>
-  </tbody>
-</table>
+  <h3>Tariff Details</h3>
+  <table class="tariff-table">
+    <thead>
+      <tr>
+        <th>Day Type</th>
+        <th>12 Hours</th>
+        <th>24 Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Weekdays<br><small>(Mon – Thu)</small></td>
+        <td>₹10,000</td>
+        <td>₹15,000</td>
+      </tr>
+      <tr class="weekend-row">
+        <td>Weekends<br><small>(Fri – Sun)</small></td>
+        <td>₹13,000</td>
+        <td>₹20,000</td>
+      </tr>
+    </tbody>
+  </table>
 
-<div class="deposit-note">
-  <strong>Security Deposit:</strong><br>
-  ₹5,000 <span>(Refundable)</span> will be collected at check-in.<br>
-  It will be returned at check-out after a quick inspection to ensure the
-  property is handed over in good condition.
-</div>
-
+  <div class="deposit-note">
+    <strong>Security Deposit:</strong><br>
+    ₹5,000 <span>(Refundable)</span> will be collected at check-in.<br>
+    It will be returned at check-out after a quick inspection to ensure the
+    property is handed over in good condition.
+  </div>
 
   <h3>Cost Summary</h3>
   <div class="summary" id="summary">
@@ -314,6 +389,122 @@
 
 <script>
 let basePrice = 0, extraGuestCharge = 0, amenitiesCost = 0;
+let bookedDates = [];
+
+// Fetch booked dates on page load
+window.addEventListener("DOMContentLoaded", () => {
+  fetchBookedDates();
+  
+  ["checkin","checkout","duration","persons","projector","campfire"]
+    .forEach(id => {
+      document.getElementById(id).addEventListener("change", calculateTotal);
+      document.getElementById(id).addEventListener("input", calculateTotal);
+    });
+    
+  // Add validation for date selection
+  document.getElementById("checkin").addEventListener("change", validateDateSelection);
+  document.getElementById("checkout").addEventListener("change", validateDateSelection);
+  document.getElementById("checkinTime").addEventListener("change", validateDateSelection);
+  document.getElementById("checkoutTime").addEventListener("change", validateDateSelection);
+  
+  // Set minimum date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("checkin").setAttribute("min", today);
+  document.getElementById("checkout").setAttribute("min", today);
+});
+
+function fetchBookedDates() {
+  const url = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec?action=getBookedDates";
+  
+  fetch(url)
+    .then(res => res.json())
+    .then(dates => {
+      bookedDates = dates;
+      console.log("Booked dates loaded:", bookedDates);
+    })
+    .catch(err => {
+      console.error("Error fetching booked dates:", err);
+    });
+}
+
+function validateDateSelection() {
+  const checkinVal = document.getElementById("checkin").value;
+  const checkoutVal = document.getElementById("checkout").value;
+  const messageDiv = document.getElementById("dateMessage");
+  const statusDiv = document.getElementById("availabilityStatus");
+  
+  if (!checkinVal && !checkoutVal) {
+    messageDiv.style.display = "none";
+    statusDiv.className = "status-checking";
+    statusDiv.textContent = "Select dates to check";
+    return true;
+  }
+  
+  // Check if check-in date is booked
+  if (checkinVal && bookedDates.includes(checkinVal)) {
+    messageDiv.style.display = "block";
+    messageDiv.className = "date-message error";
+    messageDiv.textContent = "❌ Check-in date is already booked. Please select another date.";
+    statusDiv.className = "status-error";
+    statusDiv.textContent = "❌ NOT AVAILABLE";
+    statusDiv.style.color = "red";
+    document.getElementById("checkin").value = "";
+    return false;
+  }
+  
+  // Check if check-out date is booked
+  if (checkoutVal && bookedDates.includes(checkoutVal)) {
+    messageDiv.style.display = "block";
+    messageDiv.className = "date-message error";
+    messageDiv.textContent = "❌ Check-out date is already booked. Please select another date.";
+    statusDiv.className = "status-error";
+    statusDiv.textContent = "❌ NOT AVAILABLE";
+    statusDiv.style.color = "red";
+    document.getElementById("checkout").value = "";
+    return false;
+  }
+  
+  // Check if any date in between is booked
+  if (checkinVal && checkoutVal) {
+    const start = new Date(checkinVal);
+    const end = new Date(checkoutVal);
+    
+    if (end <= start) {
+      messageDiv.style.display = "block";
+      messageDiv.className = "date-message error";
+      messageDiv.textContent = "❌ Check-out date must be after check-in date.";
+      statusDiv.className = "status-error";
+      statusDiv.textContent = "❌ INVALID DATES";
+      statusDiv.style.color = "red";
+      return false;
+    }
+    
+    let current = new Date(start);
+    
+    while (current <= end) {
+      const dateStr = current.toISOString().split('T')[0];
+      if (bookedDates.includes(dateStr)) {
+        messageDiv.style.display = "block";
+        messageDiv.className = "date-message error";
+        messageDiv.textContent = "❌ Some dates in your selected range are already booked. Please choose different dates.";
+        statusDiv.className = "status-error";
+        statusDiv.textContent = "❌ NOT AVAILABLE";
+        statusDiv.style.color = "red";
+        return false;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    
+    messageDiv.style.display = "block";
+    messageDiv.className = "date-message success";
+    messageDiv.textContent = "✅ Selected dates are available!";
+    statusDiv.className = "status-available";
+    statusDiv.textContent = "✅ AVAILABLE";
+    statusDiv.style.color = "#2e7d32";
+  }
+  
+  return true;
+}
 
 function calculateTotal() {
   const checkinVal = document.getElementById("checkin").value;
@@ -373,57 +564,62 @@ function calculateTotal() {
   `;
 }
 
-// Attach listeners
-window.addEventListener("DOMContentLoaded", () => {
-  ["checkin","checkout","duration","persons","projector","campfire"]
-    .forEach(id => {
-      document.getElementById(id).addEventListener("change", calculateTotal);
-      document.getElementById(id).addEventListener("input", calculateTotal);
-    });
-});
-
-// --- CHECK DATE AVAILABILITY WITH POPUP ---
-function checkDateAvailability(date, callback) {
-  fetch("https://script.google.com/macros/s/AKfycbxirHZX5FYD5auywvKZRPiumct3gJ0UJM_BVFObpe5xcKTBpbu9UQzxQDEc75LOVMGs/exec?action=checkDate&date=" + date)
+function checkDateAvailability(checkinDate, checkoutDate, callback) {
+  const url = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
+  
+  fetch(url)
     .then(res => res.text())
     .then(status => {
       if (status.trim() === "BOOKED") {
         alert("❌ Sorry, these dates are already booked. Please choose different dates.");
-        callback(false); // cannot submit
+        callback(false);
       } else {
-        callback(true); // date available
+        callback(true);
       }
     })
     .catch(err => {
-      alert("❌ Sorry, these dates are already booked. Please choose different dates.");
-      callback(false); // fail-safe
+      alert("❌ Error checking availability. Please try again.");
+      callback(false);
     });
 }
 
-// --- SUBMIT BOOKING ---
 function submitBooking() {
-  const selectedDate = document.getElementById("checkin").value;
+  const checkinDate = document.getElementById("checkin").value;
+  const checkoutDate = document.getElementById("checkout").value;
+  const checkinTime = document.getElementById("checkinTime").value;
+  const checkoutTime = document.getElementById("checkoutTime").value;
 
-  if (!selectedDate) {
-    alert("⚠ Please select a check-in date first.");
+  if (!checkinDate || !checkoutDate) {
+    alert("⚠ Please select check-in and check-out dates.");
     return;
   }
 
-  // Check if date is available before submitting
-  checkDateAvailability(selectedDate, function(canSubmit) {
-    if (!canSubmit) return; // stop submission if date booked
+  if (!checkinTime || !checkoutTime) {
+    alert("⚠ Please select check-in and check-out times.");
+    return;
+  }
+  
+  // Validate dates are not booked
+  if (!validateDateSelection()) {
+    alert("⚠ Please select valid dates that are not already booked.");
+    return;
+  }
+
+  // Double-check availability before submitting
+  checkDateAvailability(checkinDate, checkoutDate, function(canSubmit) {
+    if (!canSubmit) return;
 
     // Proceed with submission
     const form = document.createElement("form");
     form.method = "POST";
-    form.action = "https://script.google.com/macros/s/AKfycbxirHZX5FYD5auywvKZRPiumct3gJ0UJM_BVFObpe5xcKTBpbu9UQzxQDEc75LOVMGs/exec"; // <-- replace with your Apps Script URL
+    form.action = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec";
 
     const fields = {
       name: document.getElementById("name").value,
       city: document.getElementById("city").value,
       phone: document.getElementById("phone").value,
-      checkin: document.getElementById("checkin").value,
-      checkout: document.getElementById("checkout").value,
+      checkin: checkinDate + " " + checkinTime,
+      checkout: checkoutDate + " " + checkoutTime,
       duration: document.getElementById("duration").value,
       persons: document.getElementById("persons").value,
       adults: document.getElementById("adults").value,
@@ -447,11 +643,8 @@ function submitBooking() {
 
     document.body.appendChild(form);
     form.submit();
-    alert("✅ Booking submitted successfully!");
   });
 }
 </script>
 </body>
 </html>
-
-
