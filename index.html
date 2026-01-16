@@ -10,7 +10,7 @@
 
  body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: url('bhaktifarm.jpeg') no-repeat center center fixed;
+    background: url('C:/Users/hello/OneDrive/Desktop/bhaktifarm.jpeg') no-repeat center center fixed;
     background-size: cover;
     padding: 30px;
 }
@@ -305,13 +305,12 @@
     </tbody>
   </table>
   <div id="dateMessage" class="date-message" style="display:none;"></div>
-
-  <label>Duration</label>
-  <select id="duration" required>
-    <option value="">Select</option>
-    <option value="12">12 Hours</option>
-    <option value="24">24 Hours</option>
-  </select>
+<!-- Duration Display (Auto-calculated) -->
+<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #2196f3;">
+  <strong style="color: #1976d2;">Duration:</strong> 
+  <span id="durationDisplay" style="font-size: 18px; font-weight: bold; color: #1976d2;">Not calculated yet</span>
+</div>
+  
 
   <div class="row">
     <div>
@@ -390,15 +389,20 @@
 <script>
 let basePrice = 0, extraGuestCharge = 0, amenitiesCost = 0;
 let bookedDates = [];
+let calculatedDuration = 0;
 
 // Fetch booked dates on page load
 window.addEventListener("DOMContentLoaded", () => {
   fetchBookedDates();
   
-  ["checkin","checkout","duration","persons","projector","campfire"]
+  // Add listeners to all relevant fields
+  ["checkin","checkout","checkinTime","checkoutTime","persons","adults","children","projector","campfire"]
     .forEach(id => {
-      document.getElementById(id).addEventListener("change", calculateTotal);
-      document.getElementById(id).addEventListener("input", calculateTotal);
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener("change", calculateDurationAndTotal);
+        element.addEventListener("input", calculateDurationAndTotal);
+      }
     });
     
   // Add validation for date selection
@@ -414,7 +418,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchBookedDates() {
-  const url = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec?action=getBookedDates";
+  const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=getBookedDates";
   
   fetch(url)
     .then(res => res.json())
@@ -506,46 +510,138 @@ function validateDateSelection() {
   return true;
 }
 
-function calculateTotal() {
+function calculateDurationAndTotal() {
+  console.log("calculateDurationAndTotal called");
+  
   const checkinVal = document.getElementById("checkin").value;
   const checkoutVal = document.getElementById("checkout").value;
-  const durationVal = document.getElementById("duration").value;
-  const personsVal = Number(document.getElementById("persons").value);
+  const checkinTime = document.getElementById("checkinTime").value;
+  const checkoutTime = document.getElementById("checkoutTime").value;
+  const personsVal = Number(document.getElementById("persons").value) || 0;
 
-  if (!checkinVal || !checkoutVal || !durationVal || !personsVal) return;
+  console.log("Values:", {checkinVal, checkoutVal, checkinTime, checkoutTime, personsVal});
 
-  const checkinDate = new Date(checkinVal);
-  const checkoutDate = new Date(checkoutVal);
-
-  if (checkoutDate <= checkinDate) {
-    document.getElementById("summary").innerHTML =
-      `<div style="color:red">❌ Check-out date must be after check-in date</div>`;
+  // Calculate duration if all date/time fields are filled
+  if (checkinVal && checkoutVal && checkinTime && checkoutTime) {
+    const checkinDateTime = new Date(checkinVal + " " + checkinTime);
+    const checkoutDateTime = new Date(checkoutVal + " " + checkoutTime);
+    
+    console.log("DateTime objects:", {checkinDateTime, checkoutDateTime});
+    
+    if (checkoutDateTime <= checkinDateTime) {
+      document.getElementById("durationDisplay").textContent = "Invalid - Check-out must be after check-in";
+      document.getElementById("durationDisplay").style.color = "red";
+      document.getElementById("summary").innerHTML =
+        `<div style="color:red">❌ Check-out must be after check-in</div>`;
+      return;
+    }
+    
+    // Calculate duration in hours
+    const durationMs = checkoutDateTime - checkinDateTime;
+    const durationHours = durationMs / (1000 * 60 * 60);
+    calculatedDuration = Math.round(durationHours);
+    
+    console.log("Duration:", {durationMs, durationHours, calculatedDuration});
+    
+    document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours";
+    document.getElementById("durationDisplay").style.color = "#1976d2";
+    
+    // NEW PRICING LOGIC
+    // Step 1: Divide total hours by 12
+    const step1 = durationHours / 12;
+    console.log("Step 1 (hours / 12):", step1);
+    
+    // Step 2: Divide by 2
+    const step2 = step1 / 2;
+    console.log("Step 2 (step1 / 2):", step2);
+    
+    // Before decimal = number of 24-hour blocks
+    const blocks24hr = Math.floor(step2);
+    
+    // After decimal = if exists, one 12-hour block
+    const hasBlock12hr = (step2 - blocks24hr) > 0;
+    
+    console.log("Pricing breakdown:", {blocks24hr, hasBlock12hr});
+    
+    // Calculate base price
+    basePrice = 0;
+    let pricingDetails = [];
+    
+    // Track current date/time for weekday/weekend calculation
+    let currentDateTime = new Date(checkinDateTime);
+    
+    // Calculate for each 24-hour block
+    for (let i = 0; i < blocks24hr; i++) {
+      const day = currentDateTime.getDay(); // 0=Sun, 6=Sat
+      const isWeekend = (day === 0 || day === 5 || day === 6);
+      const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
+      const dateStr = currentDateTime.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+      const timeStr = currentDateTime.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
+      
+      let blockPrice = 0;
+      if (isWeekend) {
+        blockPrice = 20000; // 24-hour weekend rate
+        basePrice += 20000;
+      } else {
+        blockPrice = 15000; // 24-hour weekday rate
+        basePrice += 15000;
+      }
+      
+      pricingDetails.push({
+        type: '24hr',
+        block: i + 1,
+        day: dayName,
+        date: dateStr,
+        time: timeStr,
+        isWeekend: isWeekend,
+        price: blockPrice
+      });
+      
+      console.log(`24hr block ${i+1}: ${dayName} ${dateStr} ${timeStr} (${isWeekend ? 'Weekend' : 'Weekday'}), Price: ${blockPrice}`);
+      
+      // Move to next 24-hour block
+      currentDateTime = new Date(currentDateTime.getTime() + (24 * 60 * 60 * 1000));
+    }
+    
+    // Add 12-hour block if exists
+    if (hasBlock12hr) {
+      const day = currentDateTime.getDay();
+      const isWeekend = (day === 0 || day === 5 || day === 6);
+      const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
+      const dateStr = currentDateTime.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+      const timeStr = currentDateTime.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: true});
+      
+      let blockPrice = 0;
+      if (isWeekend) {
+        blockPrice = 13000; // 12-hour weekend rate
+        basePrice += 13000;
+      } else {
+        blockPrice = 10000; // 12-hour weekday rate
+        basePrice += 10000;
+      }
+      
+      pricingDetails.push({
+        type: '12hr',
+        day: dayName,
+        date: dateStr,
+        time: timeStr,
+        isWeekend: isWeekend,
+        price: blockPrice
+      });
+      
+      console.log(`12hr block: ${dayName} ${dateStr} ${timeStr} (${isWeekend ? 'Weekend' : 'Weekday'}), Price: ${blockPrice}`);
+    }
+    
+    console.log("Base price calculated:", basePrice);
+    
+  } else {
+    document.getElementById("durationDisplay").textContent = "Not calculated yet";
+    document.getElementById("durationDisplay").style.color = "#666";
+    console.log("Missing date/time fields");
     return;
   }
 
-  basePrice = 0;
-
-  // Loop through EACH day
-  let currentDate = new Date(checkinDate);
-
-  while (currentDate < checkoutDate) {
-    const day = currentDate.getDay(); // 0=Sun, 6=Sat
-    const isWeekend = (day === 0 || day === 5 || day === 6);
-
-    let dailyPrice = 0;
-
-    if (isWeekend) {
-      dailyPrice = (durationVal == 12) ? 13000 : 20000;
-    } else {
-      dailyPrice = (durationVal == 12) ? 10000 : 15000;
-    }
-
-    basePrice += dailyPrice;
-
-    // Move to next day
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
+  // Calculate other charges
   // Extra guest charges
   extraGuestCharge = personsVal > 15 ? (personsVal - 15) * 500 : 0;
 
@@ -556,16 +652,61 @@ function calculateTotal() {
 
   const total = basePrice + extraGuestCharge + amenitiesCost;
 
-  document.getElementById("summary").innerHTML = `
-    <div>Base Price (Day-wise): ₹${basePrice}</div>
-    <div>Extra Guest Charges: ₹${extraGuestCharge}</div>
-    <div>Amenities Cost: ₹${amenitiesCost}</div>
-    <div class="total">Total: ₹${total}</div>
-  `;
-}
+  console.log("Final totals:", {basePrice, extraGuestCharge, amenitiesCost, total});
 
+  // Display breakdown
+    // Calculation still happens (don't remove this!)
+  console.log("Summary updated");
+  
+  // Display ONLY the summary (no detailed breakdown)
+  document.getElementById("summary").innerHTML = `
+    <div style="font-size: 16px;"><strong>Base Price:</strong> ₹${basePrice.toLocaleString()}</div>
+    
+    <div style="font-size: 16px; margin-top: 8px;"><strong>Extra Guest Charges:</strong> ₹${extraGuestCharge.toLocaleString()} 
+      ${personsVal > 15 ? '<span style="font-size: 13px; color: #666;">(' + (personsVal - 15) + ' extra guests × ₹500)</span>' : ''}
+    </div>
+    
+    <div style="font-size: 16px; margin-top: 8px;"><strong>Amenities Cost:</strong> ₹${amenitiesCost.toLocaleString()}</div>
+    ${document.getElementById("projector").checked ? '<div style="font-size: 13px; color: #666; margin-left: 20px;">• Projector: ₹1,500</div>' : ''}
+    ${document.getElementById("campfire").checked ? '<div style="font-size: 13px; color: #666; margin-left: 20px;">• Campfire: ₹500</div>' : ''}
+    
+    <div class="total">Total: ₹${total.toLocaleString()}</div>
+  `;
+  document.getElementById("summary").innerHTML = `
+    <div><strong>📊 Pricing Breakdown:</strong></div>
+    <div style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+      <div><strong>Total Duration:</strong> ${calculatedDuration} hours</div>
+      <div><strong>Calculation:</strong> (${calculatedDuration} ÷ 12 )÷ 2 = ${step2.toFixed(2)}</div>
+      <div><strong>24-Hour Blocks:</strong> ${blocks24hr}</div>
+      <div><strong>12-Hour Block:</strong> ${hasBlock12hr ? '1' : '0'}</div>
+    </div>
+    
+    <div style="margin: 10px 0;">
+      <strong>Detailed Charges:</strong>
+      ${detailsHTML}
+    </div>
+    
+    <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+    
+    <div style="font-size: 15px;"><strong>Base Price:</strong> ₹${basePrice.toLocaleString()}</div>
+    
+    <div style="font-size: 15px; margin-top: 8px;"><strong>Extra Guest Charges:</strong> ₹${extraGuestCharge.toLocaleString()} 
+      ${personsVal > 15 ? '<span style="font-size: 12px; color: #666;">(' + (personsVal - 15) + ' extra × ₹500)</span>' : ''}
+    </div>
+    
+    <div style="font-size: 15px; margin-top: 8px;"><strong>Amenities Cost:</strong> ₹${amenitiesCost.toLocaleString()}</div>
+    ${document.getElementById("projector").checked ? '<div style="font-size: 12px; color: #666; margin-left: 20px;">• Projector: ₹1,500</div>' : ''}
+    ${document.getElementById("campfire").checked ? '<div style="font-size: 12px; color: #666; margin-left: 20px;">• Campfire: ₹500</div>' : ''}
+    
+    <hr style="margin: 15px 0; border: none; border-top: 2px solid #2e7d32;">
+    
+    <div class="total" style="font-size: 24px;">💰 Total Amount: ₹${total.toLocaleString()}</div>
+  `;
+  
+  console.log("Summary updated");
+}
 function checkDateAvailability(checkinDate, checkoutDate, callback) {
-  const url = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
+  const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
   
   fetch(url)
     .then(res => res.text())
@@ -584,10 +725,33 @@ function checkDateAvailability(checkinDate, checkoutDate, callback) {
 }
 
 function submitBooking() {
+  // Get all values
+  const name = document.getElementById("name").value;
+  const city = document.getElementById("city").value;
+  const phone = document.getElementById("phone").value;
   const checkinDate = document.getElementById("checkin").value;
   const checkoutDate = document.getElementById("checkout").value;
   const checkinTime = document.getElementById("checkinTime").value;
   const checkoutTime = document.getElementById("checkoutTime").value;
+  const persons = document.getElementById("persons").value;
+  const adults = document.getElementById("adults").value;
+  const children = document.getElementById("children").value;
+
+  // Validate required fields
+  if (!name) {
+    alert("⚠ Please enter your name.");
+    return;
+  }
+
+  if (!city) {
+    alert("⚠ Please enter your city.");
+    return;
+  }
+
+  if (!phone) {
+    alert("⚠ Please enter your phone number.");
+    return;
+  }
 
   if (!checkinDate || !checkoutDate) {
     alert("⚠ Please select check-in and check-out dates.");
@@ -598,39 +762,73 @@ function submitBooking() {
     alert("⚠ Please select check-in and check-out times.");
     return;
   }
+
+  if (!persons || !adults || !children) {
+    alert("⚠ Please enter guest details (persons, adults, children).");
+    return;
+  }
+
+  if (calculatedDuration === 0) {
+    alert("⚠ Duration not calculated. Please check your dates and times.");
+    return;
+  }
+
+  // Calculate total if not already done
+  if (basePrice === 0) {
+    alert("⚠ Please wait for the cost calculation to complete.");
+    calculateDurationAndTotal();
+    setTimeout(() => {
+      if (basePrice === 0) {
+        alert("⚠ Unable to calculate price. Please check all fields.");
+        return;
+      }
+    }, 500);
+    return;
+  }
   
   // Validate dates are not booked
-  if (!validateDateSelection()) {
+  const statusDiv = document.getElementById("availabilityStatus");
+  if (statusDiv.textContent.includes("NOT AVAILABLE") || statusDiv.textContent.includes("INVALID")) {
     alert("⚠ Please select valid dates that are not already booked.");
     return;
   }
 
+  // Show loading message
+  const submitButton = document.querySelector("button");
+  const originalText = submitButton.textContent;
+  submitButton.textContent = "Submitting...";
+  submitButton.disabled = true;
+
   // Double-check availability before submitting
   checkDateAvailability(checkinDate, checkoutDate, function(canSubmit) {
-    if (!canSubmit) return;
+    if (!canSubmit) {
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
+      return;
+    }
 
     // Proceed with submission
     const form = document.createElement("form");
     form.method = "POST";
-    form.action = "https://script.google.com/macros/s/AKfycbw9_PkJ_6DNlGtyVALNgk-BWLmCKWWFEKajzG3ll-jtnFG9kW4nskgPSDYpndu89t0j/exec";
+    form.action = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec";
 
     const fields = {
-      name: document.getElementById("name").value,
-      city: document.getElementById("city").value,
-      phone: document.getElementById("phone").value,
+      name: name,
+      city: city,
+      phone: phone,
       checkin: checkinDate + " " + checkinTime,
       checkout: checkoutDate + " " + checkoutTime,
-      duration: document.getElementById("duration").value,
-      persons: document.getElementById("persons").value,
-      adults: document.getElementById("adults").value,
-      children: document.getElementById("children").value,
+      duration: calculatedDuration,
+      persons: persons,
+      adults: adults,
+      children: children,
       projector: document.getElementById("projector").checked ? "Yes" : "No",
       campfire: document.getElementById("campfire").checked ? "Yes" : "No",
-      basePrice,
-      extraGuestCharge,
-      amenitiesCost,
+      basePrice: basePrice,
+      extraGuestCharge: extraGuestCharge,
+      amenitiesCost: amenitiesCost,
       total: basePrice + extraGuestCharge + amenitiesCost,
-      requirements: document.getElementById("requirements").value
+      requirements: document.getElementById("requirements").value || "None"
     };
 
     for (let key in fields) {
