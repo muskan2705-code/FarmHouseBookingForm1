@@ -10,7 +10,7 @@
 
  body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: url('bhaktifarm.jpeg') no-repeat center center fixed;
+    background: url('C:/Users/hello/OneDrive/Desktop/bhaktifarm.jpeg') no-repeat center center fixed;
     background-size: cover;
     padding: 30px;
 }
@@ -529,7 +529,7 @@ function calculateDurationAndTotal() {
     
     console.log("DateTime objects:", {checkinDateTime, checkoutDateTime});
     
-        if (checkoutDateTime <= checkinDateTime) {
+    if (checkoutDateTime <= checkinDateTime) {
       document.getElementById("durationDisplay").textContent = "Invalid - Check-out time must be after check-in time";
       document.getElementById("durationDisplay").style.color = "red";
       document.getElementById("summary").innerHTML =
@@ -539,13 +539,19 @@ function calculateDurationAndTotal() {
     
     // Calculate duration in hours
     const durationMs = checkoutDateTime - checkinDateTime;
-    const durationHours = durationMs / (1000 * 60 * 60);
+    let durationHours = durationMs / (1000 * 60 * 60);
     calculatedDuration = Math.round(durationHours);
     
-    console.log("Duration:", {durationMs, durationHours, calculatedDuration});
-    
-    document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours";
+    // Minimum 12 hours charge
+    if (durationHours < 12) {
+      durationHours = 12;
+      document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours (Charged as 12 Hours - Minimum)";
+    } else {
+      document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours";
+    }
     document.getElementById("durationDisplay").style.color = "#1976d2";
+    
+    console.log("Duration:", {durationMs, durationHours, calculatedDuration});
     
     // NEW PRICING LOGIC
     // Step 1: Divide total hours by 12
@@ -635,16 +641,21 @@ function calculateDurationAndTotal() {
     
     console.log("Base price calculated:", basePrice);
     
+    // Calculate number of chargeable days for extra guests
+    const chargeDays = blocks24hr + (hasBlock12hr ? 1 : 0) || 1; // Minimum 1 day
+    
+    // Extra guest charges - ₹500 per extra person PER DAY
+    let extraGuests = personsVal > 15 ? (personsVal - 15) : 0;
+    extraGuestCharge = extraGuests > 0 ? extraGuests * 500 * chargeDays : 0;
+    
+    console.log("Extra guest calculation:", {extraGuests, chargeDays, extraGuestCharge});
+    
   } else {
     document.getElementById("durationDisplay").textContent = "Not calculated yet";
     document.getElementById("durationDisplay").style.color = "#666";
     console.log("Missing date/time fields");
     return;
   }
-
-  // Calculate other charges
-  // Extra guest charges
-  extraGuestCharge = personsVal > 15 ? (personsVal - 15) * 500 : 0;
 
   // Amenities
   amenitiesCost =
@@ -655,10 +666,8 @@ function calculateDurationAndTotal() {
 
   console.log("Final totals:", {basePrice, extraGuestCharge, amenitiesCost, total});
 
-  // Display breakdown
-    // Calculation still happens (don't remove this!)
-    // Calculate days and hours breakdown
-  const totalHours = calculatedDuration < 12 ? 12 : calculatedDuration; // Use minimum 12 hours
+  // Calculate days and hours breakdown for display
+  const totalHours = calculatedDuration < 12 ? 12 : calculatedDuration;
   const fullDays = Math.floor(totalHours / 24);
   const remainingHours = totalHours % 24;
   
@@ -672,17 +681,20 @@ function calculateDurationAndTotal() {
     stayDuration = `${remainingHours} Hour${remainingHours > 1 ? 's' : ''}`;
   }
   
+  // Recalculate for display
+  const totalHoursForCharging = calculatedDuration < 12 ? 12 : calculatedDuration;
+  const step1Display = totalHoursForCharging / 12;
+  const step2Display = step1Display / 2;
+  const blocks24hrDisplay = Math.floor(step2Display);
+  const hasBlock12hrDisplay = (step2Display - blocks24hrDisplay) > 0;
+  const chargeDaysDisplay = blocks24hrDisplay + (hasBlock12hrDisplay ? 1 : 0) || 1;
+  
   // Build per-day pricing breakdown
   let perDayBreakdown = '';
   let currentDateTime = new Date(document.getElementById("checkin").value + " " + document.getElementById("checkinTime").value);
   
-  const step1 = totalHours / 12;
-  const step2 = step1 / 2;
-  const blocks24hr = Math.floor(step2);
-  const hasBlock12hr = (step2 - blocks24hr) > 0;
-  
   // Show 24-hour blocks
-  for (let i = 0; i < blocks24hr; i++) {
+  for (let i = 0; i < blocks24hrDisplay; i++) {
     const day = currentDateTime.getDay();
     const isWeekend = (day === 0 || day === 5 || day === 6);
     const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
@@ -705,7 +717,7 @@ function calculateDurationAndTotal() {
   }
   
   // Show 12-hour block if exists
-  if (hasBlock12hr) {
+  if (hasBlock12hrDisplay) {
     const day = currentDateTime.getDay();
     const isWeekend = (day === 0 || day === 5 || day === 6);
     const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
@@ -728,6 +740,8 @@ function calculateDurationAndTotal() {
   console.log("Summary updated");
   
   // Display enhanced summary
+  let extraGuests = personsVal > 15 ? (personsVal - 15) : 0;
+  
   document.getElementById("summary").innerHTML = `
     <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2196f3;">
       <div style="font-size: 15px; color: #1565c0;"><strong>📅 Stay Duration:</strong></div>
@@ -745,7 +759,7 @@ function calculateDurationAndTotal() {
     <div style="font-size: 16px;"><strong>Base Price:</strong> ₹${basePrice.toLocaleString()}</div>
     
     <div style="font-size: 16px; margin-top: 8px;"><strong>Extra Guest Charges:</strong> ₹${extraGuestCharge.toLocaleString()} 
-      ${personsVal > 15 ? '<span style="font-size: 13px; color: #666;">(' + (personsVal - 15) + ' extra guests × ₹500)</span>' : ''}
+      ${personsVal > 15 ? '<span style="font-size: 13px; color: #666;">(' + extraGuests + ' extra guest' + (extraGuests > 1 ? 's' : '') + ' × ₹500 × ' + chargeDaysDisplay + ' day' + (chargeDaysDisplay > 1 ? 's' : '') + ')</span>' : ''}
     </div>
     
     <div style="font-size: 16px; margin-top: 8px;"><strong>Amenities Cost:</strong> ₹${amenitiesCost.toLocaleString()}</div>
@@ -756,38 +770,6 @@ function calculateDurationAndTotal() {
     
     <div class="total">Total: ₹${total.toLocaleString()}</div>
   `;
-  document.getElementById("summary").innerHTML = `
-    <div><strong>📊 Pricing Breakdown:</strong></div>
-    <div style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
-      <div><strong>Total Duration:</strong> ${calculatedDuration} hours</div>
-      <div><strong>Calculation:</strong> (${calculatedDuration} ÷ 12 )÷ 2 = ${step2.toFixed(2)}</div>
-      <div><strong>24-Hour Blocks:</strong> ${blocks24hr}</div>
-      <div><strong>12-Hour Block:</strong> ${hasBlock12hr ? '1' : '0'}</div>
-    </div>
-    
-    <div style="margin: 10px 0;">
-      <strong>Detailed Charges:</strong>
-      ${detailsHTML}
-    </div>
-    
-    <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-    
-    <div style="font-size: 15px;"><strong>Base Price:</strong> ₹${basePrice.toLocaleString()}</div>
-    
-    <div style="font-size: 15px; margin-top: 8px;"><strong>Extra Guest Charges:</strong> ₹${extraGuestCharge.toLocaleString()} 
-      ${personsVal > 15 ? '<span style="font-size: 12px; color: #666;">(' + (personsVal - 15) + ' extra × ₹500)</span>' : ''}
-    </div>
-    
-    <div style="font-size: 15px; margin-top: 8px;"><strong>Amenities Cost:</strong> ₹${amenitiesCost.toLocaleString()}</div>
-    ${document.getElementById("projector").checked ? '<div style="font-size: 12px; color: #666; margin-left: 20px;">• Projector: ₹1,500</div>' : ''}
-    ${document.getElementById("campfire").checked ? '<div style="font-size: 12px; color: #666; margin-left: 20px;">• Campfire: ₹500</div>' : ''}
-    
-    <hr style="margin: 15px 0; border: none; border-top: 2px solid #2e7d32;">
-    
-    <div class="total" style="font-size: 24px;">💰 Total Amount: ₹${total.toLocaleString()}</div>
-  `;
-  
-  console.log("Summary updated");
 }
 function checkDateAvailability(checkinDate, checkoutDate, callback) {
   const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
