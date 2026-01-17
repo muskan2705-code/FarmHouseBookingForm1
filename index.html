@@ -10,7 +10,7 @@
 
  body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: url(' bhaktifarm.jpeg ') no-repeat center center fixed;
+    background: url('C:/Users/hello/OneDrive/Desktop/bhaktifarm.jpeg') no-repeat center center fixed;
     background-size: cover;
     padding: 30px;
 }
@@ -473,10 +473,11 @@ function validateDateSelection() {
     const start = new Date(checkinVal);
     const end = new Date(checkoutVal);
     
-    if (end <= start) {
+        // Allow same date if times are different (will be validated later)
+    if (end < start) {
       messageDiv.style.display = "block";
       messageDiv.className = "date-message error";
-      messageDiv.textContent = "❌ Check-out date must be after check-in date.";
+      messageDiv.textContent = "❌ Check-out date cannot be before check-in date.";
       statusDiv.className = "status-error";
       statusDiv.textContent = "❌ INVALID DATES";
       statusDiv.style.color = "red";
@@ -528,11 +529,11 @@ function calculateDurationAndTotal() {
     
     console.log("DateTime objects:", {checkinDateTime, checkoutDateTime});
     
-    if (checkoutDateTime <= checkinDateTime) {
-      document.getElementById("durationDisplay").textContent = "Invalid - Check-out must be after check-in";
+        if (checkoutDateTime <= checkinDateTime) {
+      document.getElementById("durationDisplay").textContent = "Invalid - Check-out time must be after check-in time";
       document.getElementById("durationDisplay").style.color = "red";
       document.getElementById("summary").innerHTML =
-        `<div style="color:red">❌ Check-out must be after check-in</div>`;
+        `<div style="color:red">❌ Check-out time must be after check-in time</div>`;
       return;
     }
     
@@ -846,5 +847,3 @@ function submitBooking() {
 </script>
 </body>
 </html>
-
-
