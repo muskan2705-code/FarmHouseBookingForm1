@@ -657,10 +657,91 @@ function calculateDurationAndTotal() {
 
   // Display breakdown
     // Calculation still happens (don't remove this!)
+    // Calculate days and hours breakdown
+  const totalHours = calculatedDuration < 12 ? 12 : calculatedDuration; // Use minimum 12 hours
+  const fullDays = Math.floor(totalHours / 24);
+  const remainingHours = totalHours % 24;
+  
+  // Build stay duration display
+  let stayDuration = '';
+  if (fullDays > 0 && remainingHours > 0) {
+    stayDuration = `${fullDays} Day${fullDays > 1 ? 's' : ''} and ${remainingHours} Hour${remainingHours > 1 ? 's' : ''}`;
+  } else if (fullDays > 0) {
+    stayDuration = `${fullDays} Day${fullDays > 1 ? 's' : ''}`;
+  } else {
+    stayDuration = `${remainingHours} Hour${remainingHours > 1 ? 's' : ''}`;
+  }
+  
+  // Build per-day pricing breakdown
+  let perDayBreakdown = '';
+  let currentDateTime = new Date(document.getElementById("checkin").value + " " + document.getElementById("checkinTime").value);
+  
+  const step1 = totalHours / 12;
+  const step2 = step1 / 2;
+  const blocks24hr = Math.floor(step2);
+  const hasBlock12hr = (step2 - blocks24hr) > 0;
+  
+  // Show 24-hour blocks
+  for (let i = 0; i < blocks24hr; i++) {
+    const day = currentDateTime.getDay();
+    const isWeekend = (day === 0 || day === 5 || day === 6);
+    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
+    const dateStr = currentDateTime.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+    const price = isWeekend ? 20000 : 15000;
+    
+    perDayBreakdown += `
+      <div style="display: flex; justify-content: space-between; padding: 8px; background: ${isWeekend ? '#fff3e0' : '#f5f5f5'}; border-radius: 5px; margin-bottom: 5px;">
+        <div>
+          <strong>${dayName}</strong>, ${dateStr}<br>
+          <span style="font-size: 12px; color: #666;">24 Hours ${isWeekend ? '(Weekend)' : '(Weekday)'}</span>
+        </div>
+        <div style="text-align: right;">
+          <strong style="color: #2e7d32;">₹${price.toLocaleString()}</strong>
+        </div>
+      </div>
+    `;
+    
+    currentDateTime = new Date(currentDateTime.getTime() + (24 * 60 * 60 * 1000));
+  }
+  
+  // Show 12-hour block if exists
+  if (hasBlock12hr) {
+    const day = currentDateTime.getDay();
+    const isWeekend = (day === 0 || day === 5 || day === 6);
+    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
+    const dateStr = currentDateTime.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+    const price = isWeekend ? 13000 : 10000;
+    
+    perDayBreakdown += `
+      <div style="display: flex; justify-content: space-between; padding: 8px; background: ${isWeekend ? '#fff3e0' : '#f5f5f5'}; border-radius: 5px; margin-bottom: 5px;">
+        <div>
+          <strong>${dayName}</strong>, ${dateStr}<br>
+          <span style="font-size: 12px; color: #666;">12 Hours ${isWeekend ? '(Weekend)' : '(Weekday)'}</span>
+        </div>
+        <div style="text-align: right;">
+          <strong style="color: #2e7d32;">₹${price.toLocaleString()}</strong>
+        </div>
+      </div>
+    `;
+  }
+  
   console.log("Summary updated");
   
-  // Display ONLY the summary (no detailed breakdown)
+  // Display enhanced summary
   document.getElementById("summary").innerHTML = `
+    <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2196f3;">
+      <div style="font-size: 15px; color: #1565c0;"><strong>📅 Stay Duration:</strong></div>
+      <div style="font-size: 18px; font-weight: bold; color: #0d47a1; margin-top: 5px;">${stayDuration}</div>
+      ${calculatedDuration < 12 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;">⚠️ Minimum 12-hour charge applies</div>' : ''}
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+      <div style="font-size: 15px; margin-bottom: 10px;"><strong>💰 Per Day Pricing:</strong></div>
+      ${perDayBreakdown}
+    </div>
+    
+    <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+    
     <div style="font-size: 16px;"><strong>Base Price:</strong> ₹${basePrice.toLocaleString()}</div>
     
     <div style="font-size: 16px; margin-top: 8px;"><strong>Extra Guest Charges:</strong> ₹${extraGuestCharge.toLocaleString()} 
@@ -670,6 +751,8 @@ function calculateDurationAndTotal() {
     <div style="font-size: 16px; margin-top: 8px;"><strong>Amenities Cost:</strong> ₹${amenitiesCost.toLocaleString()}</div>
     ${document.getElementById("projector").checked ? '<div style="font-size: 13px; color: #666; margin-left: 20px;">• Projector: ₹1,500</div>' : ''}
     ${document.getElementById("campfire").checked ? '<div style="font-size: 13px; color: #666; margin-left: 20px;">• Campfire: ₹500</div>' : ''}
+    
+    <hr style="margin: 15px 0; border: none; border-top: 2px solid #2e7d32;">
     
     <div class="total">Total: ₹${total.toLocaleString()}</div>
   `;
@@ -847,4 +930,3 @@ function submitBooking() {
 </script>
 </body>
 </html>
-
