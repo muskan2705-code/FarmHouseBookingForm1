@@ -546,6 +546,10 @@ function calculateDurationAndTotal() {
     if (durationHours < 12) {
       durationHours = 12;
       document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours (Charged as 12 Hours - Minimum)";
+    } else if (durationHours > 12 && durationHours <= 24) {
+      // If more than 12 hours but less than or equal to 24, charge as 24 hours
+      durationHours = 24;
+      document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours (Charged as 24 Hours)";
     } else {
       document.getElementById("durationDisplay").textContent = calculatedDuration + " Hours";
     }
@@ -667,7 +671,7 @@ function calculateDurationAndTotal() {
   console.log("Final totals:", {basePrice, extraGuestCharge, amenitiesCost, total});
 
   // Calculate days and hours breakdown for display
-  const totalHours = calculatedDuration < 12 ? 12 : calculatedDuration;
+  const totalHours = calculatedDuration < 12 ? 12 : (calculatedDuration > 12 && calculatedDuration <= 24 ? 24 : calculatedDuration);
   const fullDays = Math.floor(totalHours / 24);
   const remainingHours = totalHours % 24;
   
@@ -682,7 +686,7 @@ function calculateDurationAndTotal() {
   }
   
   // Recalculate for display
-  const totalHoursForCharging = calculatedDuration < 12 ? 12 : calculatedDuration;
+  const totalHoursForCharging = calculatedDuration < 12 ? 12 : (calculatedDuration > 12 && calculatedDuration <= 24 ? 24 : calculatedDuration);
   const step1Display = totalHoursForCharging / 12;
   const step2Display = step1Display / 2;
   const blocks24hrDisplay = Math.floor(step2Display);
@@ -747,6 +751,7 @@ function calculateDurationAndTotal() {
       <div style="font-size: 15px; color: #1565c0;"><strong>📅 Stay Duration:</strong></div>
       <div style="font-size: 18px; font-weight: bold; color: #0d47a1; margin-top: 5px;">${stayDuration}</div>
       ${calculatedDuration < 12 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;">⚠️ Minimum 12-hour charge applies</div>' : ''}
+      ${calculatedDuration > 12 && calculatedDuration <= 24 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;">⚠️ Charged as 24 hours</div>' : ''}
     </div>
     
     <div style="margin-bottom: 15px;">
@@ -771,6 +776,7 @@ function calculateDurationAndTotal() {
     <div class="total">Total: ₹${total.toLocaleString()}</div>
   `;
 }
+
 function checkDateAvailability(checkinDate, checkoutDate, callback) {
   const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
   
@@ -912,4 +918,3 @@ function submitBooking() {
 </script>
 </body>
 </html>
-
