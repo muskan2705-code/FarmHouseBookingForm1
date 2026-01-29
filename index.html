@@ -10,7 +10,7 @@
 
  body {
     font-family: 'Segoe UI', Tahoma, sans-serif;
-    background: url('bhaktifarm.jpeg') no-repeat center center fixed;
+    background: url('C:/Users/hello/OneDrive/Desktop/bhaktifarm.jpeg') no-repeat center center fixed;
     background-size: cover;
     padding: 30px;
 }
@@ -254,15 +254,6 @@
   }
 
 </style>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CR54TKMTNT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CR54TKMTNT');
-</script>
 
 </head>
 
@@ -427,7 +418,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchBookedDates() {
-  const url = "https://script.google.com/macros/s/AKfycbxDe29Aq2npxsbX2NZmN44HU6_ysGbJneVB3DlnwpSYXpKnkjwARHXGfHVESRuZXal5/exec?action=getBookedDates";
+  const url = "echttps://script.google.com/macros/s/AKfycbxDe29Aq2npxsbX2NZmN44HU6_ysGbJneVB3DlnwpSYXpKnkjwARHXGfHVESRuZXal5/exec?action=getBookedDates";
   
   fetch(url)
     .then(res => res.json())
@@ -760,7 +751,7 @@ function calculateDurationAndTotal() {
       <div style="font-size: 15px; color: #1565c0;"><strong>📅 Stay Duration:</strong></div>
       <div style="font-size: 18px; font-weight: bold; color: #0d47a1; margin-top: 5px;">${stayDuration}</div>
       ${calculatedDuration < 12 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;">⚠️ Minimum 12-hour charge applies</div>' : ''}
-      ${calculatedDuration > 12 && calculatedDuration <= 24 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;">⚠️ Charged as 24 hours</div>' : ''}
+      ${calculatedDuration > 12 && calculatedDuration <= 24 ? '<div style="font-size: 12px; color: #f57c00; margin-top: 5px;"> </div>' : ''}
     </div>
     
     <div style="margin-bottom: 15px;">
@@ -927,5 +918,3 @@ function submitBooking() {
 </script>
 </body>
 </html>
-
-
