@@ -427,7 +427,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function fetchBookedDates() {
-  const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=getBookedDates";
+  const url = "https://script.google.com/macros/s/AKfycbxDe29Aq2npxsbX2NZmN44HU6_ysGbJneVB3DlnwpSYXpKnkjwARHXGfHVESRuZXal5/exec?action=getBookedDates";
   
   fetch(url)
     .then(res => res.json())
@@ -787,7 +787,7 @@ function calculateDurationAndTotal() {
 }
 
 function checkDateAvailability(checkinDate, checkoutDate, callback) {
-  const url = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
+  const url = "https://script.google.com/macros/s/AKfycbxDe29Aq2npxsbX2NZmN44HU6_ysGbJneVB3DlnwpSYXpKnkjwARHXGfHVESRuZXal5/exec?action=checkDate&checkin=" + checkinDate + "&checkout=" + checkoutDate;
   
   fetch(url)
     .then(res => res.text())
@@ -891,7 +891,7 @@ function submitBooking() {
     // Proceed with submission
     const form = document.createElement("form");
     form.method = "POST";
-    form.action = "https://script.google.com/macros/s/AKfycbw3qsbKAetknjN87DFFssLHbblZD_9i4RtM-SoqLueZG5c7g3B0al0wEq-gZnbJKbum/exec";
+    form.action = "https://script.google.com/macros/s/AKfycbxDe29Aq2npxsbX2NZmN44HU6_ysGbJneVB3DlnwpSYXpKnkjwARHXGfHVESRuZXal5/exec";
 
     const fields = {
       name: name,
@@ -927,4 +927,5 @@ function submitBooking() {
 </script>
 </body>
 </html>
+
 
